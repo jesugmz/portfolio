@@ -10,5 +10,6 @@ elif [[ "$SOURCE_BRANCH" =~ $TAG_REGEX ]]; then # git tag in format v1.2.3
   echo "---> Building prod image for tag $SOURCE_BRANCH"
   make --directory=../../ build-prod-image
 else
-  echo $SOURCE_BRANCH
+  echo "---> The branch name $SOURCE_BRANCH was not recognized, exiting..."
+  exit 1
 fi

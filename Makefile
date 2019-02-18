@@ -11,7 +11,7 @@ image_tag_prod = $(shell git describe --abbrev=0 --tags)
 #
 # Development targets
 #
-run: #pull-latest-dev-image
+run: pull-latest-dev-image
 	@docker-compose -f docker/portfolio.yml up
 
 destroy:

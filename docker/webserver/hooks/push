@@ -9,4 +9,7 @@ if [ "$SOURCE_BRANCH" == "master" ]; then
 elif [[ "$SOURCE_BRANCH" =~ $TAG_REGEX ]]; then # git tag in format v1.2.3
   echo "---> Pushing prod image for tag $SOURCE_BRANCH"
   make --directory=../../ push-prod-image
+else
+  echo "---> The branch name $SOURCE_BRANCH was not recognized, exiting..."
+  exit 1
 fi
