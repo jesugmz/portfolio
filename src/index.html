@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jesús Gómez portfolio</title>
+    <style>
+      body {
+        background-color: #fcfcfb;
+        color: #333;
+        font-family: serif;
+        font-size: 24px;
+        margin: 40px auto 0;
+        max-width: 1200px;
+        cursor: default
+      }
+
+      h1,
+      h2 {
+        font-weight: 500;
+        line-height: 1.1;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.4em;
+      }
+
+      #latests-github-gists h2 {
+        margin: 0;
+        font-size: 0.8em;
+      }
+
+      header > img {
+        display: block;
+        margin: auto;
+      }
+
+      nav {
+        margin: 50px 0 100px;
+        text-align: center;
+      }
+
+      nav > a {
+        color: #777;
+        text-decoration: none;
+        padding: 15px;
+      }
+
+      nav > a:hover {
+        border-bottom: 5px solid #eee;
+        color: #333;
+      }
+
+      section {
+        margin-bottom: 100px;
+      }
+
+      section h2 {
+        margin: 0 0 10px 0;
+      }
+
+      section h2 > a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      section h2 > a:hover {
+        text-decoration: underline;
+      }
+
+      section p {
+        font-size: 0.8em;
+        margin: 0;
+      }
+
+      .item {
+        border-left: 3px solid #ccc;
+        margin-bottom: 25px;
+        padding: 10px 0 15px 15px;
+      }
+
+      #contact {
+        margin-bottom: 5px;
+      }
+
+      #contact > h1,
+      #email-text {
+        display: inline-block;
+        margin: 0;
+      }
+
+      #email-text {
+        font-size: 1.2em;
+        text-align: center;
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="logo.png" width="250" height="250" alt="Logo">
+      <p>¡Hola! me llamo Jesús Gómez, soy ingeniero especializado en tecnologías de la información dedicado al desarrollo web. Usabilidad, seguridad, rendimiento y escalabilidad son premisas en mi trabajo.</p>
+      <p>Algunas de mis diversas habilidades son el desarrollo web full stack y app web, web services y APIs, scripting y automatización de tareas, administración y despliegue en entornos Linux.</p>
+    </header>
+    <nav>
+      <a href="https://www.linkedin.com/in/jesugmz/">LinkedIn</a>
+      <a href="https://github.com/jesugmz">GitHub</a>
+      <a href="https://gist.github.com/jesugmz">GitHub Gists</a>
+      <a href="https://stackoverflow.com/users/4411354/jesugmz">StackOverflow</a>
+      <a href="#contact">Contacto</a>
+      <a href="https://github.com/jesugmz/portfolio"># Show me the code #</a>
+    </nav>
+    <main>
+      <section>
+        <h1>Most popular GitHub repos</h1>
+        <div id="most-popular-github-repos"></div>
+        <a href="https://github.com/jesugmz">See GitHub profile</a>
+      </section>
+
+      <section>
+        <h1>Latests GitHub gists</h1>
+        <div id="latests-github-gists"></div>
+        <a href="https://gist.github.com/jesugmz">See GitHub Gists profile</a>
+      </section>
+
+      <section id="contact">
+        <h1>Contacto</h1>
+        <p id="email-text">hola[arroba]jesusgomez[punto]io</p>
+      </section>
+    </main>
+  </body>
+  <script>
+    // key must be a value that can be converted to interger with parseInt()
+    function sortBy(key, data) {
+      return data.sort((a, b) => {
+        let x = parseInt(a[key]);
+        let y = parseInt(b[key]);
+
+        return x > y ? -1 : (x < y ? 1 : 0);
+      });
+    }
+
+    async function request(url) {
+      try {
+        let response = await fetch(url);
+        return await response.json();
+      } catch (e) {
+        console.error('Error while making the request: ' + e);
+      }
+    }
+
+    // most starred repos
+    request('https://api.github.com/users/jesugmz/repos')
+      .then(data => {
+        const reposElement = document.getElementById('most-popular-github-repos');
+        let sortedRepositories = sortBy('stargazers_count', data);
+        let index = 0;
+
+        for (let repository of sortedRepositories) {
+          reposElement.insertAdjacentHTML('beforeend',
+            '<div class="item"><h2><a href="' + repository['html_url'] + '">'+ repository['name'] + '</a></h2> \
+            <p>' + repository['description'] + '</p> \
+            <p>' + (repository['language'] ? repository['language'] : 'Markdown') + '</p></div>'
+          );
+
+          // iter for the first 5 items
+          if (++index === 5) break;
+        }
+      });
+
+      // latests gists
+      request('https://api.github.com/users/jesugmz/gists')
+        .then(data => {
+          const gistsElement = document.getElementById('latests-github-gists');
+          let index = 0;
+
+          for (let gist of data) {
+            gistsElement.insertAdjacentHTML('beforeend',
+              '<div class="item"><h2><a href="' + gist['html_url'] + '">'+ gist['description'] + '</a></h2></div>'
+            );
+
+            // iter for the first 5 items
+            if (++index === 15) break;
+          }
+        });
+
+      // replace email obfuscation
+      let obfuscatedEmail = document.getElementById('email-text').innerHTML;
+      let cleanEmail = obfuscatedEmail.replace('[arroba]', '@').replace('[punto]', '.');
+      document.getElementById('email-text').innerHTML = cleanEmail;
+  </script>
+</html>
