@@ -4,6 +4,9 @@ FROM nginx:$NGINX_VERSION AS base
 
 RUN rm /etc/nginx/conf.d/default.conf
 
+COPY docker/webserver/conf/nginx.conf /etc/nginx/nginx.conf
+COPY docker/webserver/conf/server-block.conf /etc/nginx/conf.d/jesusgomez.io.conf
+
 WORKDIR /var/www
 
 #
@@ -18,6 +21,5 @@ FROM base AS dev
 #
 FROM base AS prod
 
-COPY docker/webserver/conf/nginx.conf /etc/nginx/nginx.conf
-COPY docker/webserver/conf/server-block.conf /etc/nginx/conf.d/jesusgomez.io.conf
+# makes a self-contained image
 COPY --chown=nginx:nginx src/ ./

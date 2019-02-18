@@ -6,7 +6,7 @@ NGINX_VERSION := 1.15
 repository_uri := jesugmz/portfolio
 # it is evaluated when is used (recursively expanded variable)
 # https://ftp.gnu.org/old-gnu/Manuals/make-3.79.1/html_chapter/make_6.html#SEC59
-image_tag_prod = prod-$(shell git describe --abbrev=0 --tags)
+image_tag_prod = $(shell git describe --abbrev=0 --tags)
 
 #
 # Development targets
@@ -22,6 +22,8 @@ restart: destroy run
 bash:
 	@docker-compose -f docker/portfolio.yml exec webserver bash
 
+# Heads Up! Docker Hub automated build is enabled for the Docker image tag
+# "dev" associated to master branch. Check docker/webserver/hooks/build
 build-dev-image:
 	docker build \
 		--build-arg NGINX_VERSION=$(NGINX_VERSION) \
@@ -38,6 +40,8 @@ pull-latest-dev-image:
 #
 # Production targets
 #
+# Heads Up! Docker Hub automated build is enabled for the Docker image tags
+# "v*" associated to git tags. Check docker/webserver/hooks/build
 build-prod-image:
 	docker build \
 		--build-arg NGINX_VERSION=$(NGINX_VERSION) \
